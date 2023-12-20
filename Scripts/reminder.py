@@ -64,8 +64,8 @@ def get_users():
 
 def remind_dues(id, wet_balance, dry_balance):
     try:
-        wet_dues = "You have an outstanding balance of $" + str(wet_balance) +" for Wet Dues. Please pay your dues or Tyler Chilton will nut in your mouth"
-        dry_dues = "You have an outstanding balance of $"+ str(dry_balance) +" for Dry Dues. Please pay your dues or Chris Johnson will give you head"
+        wet_dues = "You have an outstanding balance of $" + str(wet_balance) +" for Wet Dues. Please pay your dues or you will be fined"
+        dry_dues = "You have an outstanding balance of $"+ str(dry_balance) +" for Dry Dues. Please pay your dues or you will be fined"
         if wet_balance > 0:
             client.chat_postMessage(channel=id, text=wet_dues)
         time.sleep(1)
