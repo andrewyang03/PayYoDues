@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import slack
+import sys
 import os
 import time
 import re
@@ -28,6 +29,8 @@ client = slack.WebClient(token=os.environ['SLACK_TOKEN'])
 
 dues_pattern = r'\$[0-9\,]+'
 
+# Limitation: if someone just changes their slack name, there's no way to actually send them a message.
+# Ask if this can be done with just id's, so we'll need a list of getters for the ID of each brother with their slack name displayed on the frontend too
 def get_users(): 
     try:
         # Adjust this later
@@ -62,15 +65,18 @@ def get_users():
         print(f"Error fetching users list: {error}")
         return []
 
-def remind_dues(id, wet_balance, dry_balance):
+def remind_dues(id, wet_balance, dry_balance, custom_message):
     try:
         wet_dues = "You have an outstanding balance of $" + str(wet_balance) +" for Wet Dues. Please pay your dues or you will be fined"
         dry_dues = "You have an outstanding balance of $"+ str(dry_balance) +" for Dry Dues. Please pay your dues or you will be fined"
-        if wet_balance > 0:
-            client.chat_postMessage(channel=id, text=wet_dues)
-        time.sleep(1)
-        if dry_balance > 0:
-            client.chat_postMessage(channel=id, text=dry_dues)
+        if custom_message:
+            client.chat_postMessage(channel=id, text=custom_message)
+        else:
+            if wet_balance > 0:
+                client.chat_postMessage(channel=id, text=wet_dues)
+            time.sleep(1)
+            if dry_balance > 0:
+                client.chat_postMessage(channel=id, text=dry_dues)
         print(f"Messages send to {id}")
     except Exception as error:
         print(f"Failed to send message to {id}: {error}")
@@ -108,8 +114,11 @@ def read_sheet():
         #     print(row)
     except HttpError as error:
         print(error)
-    
-    
+
+# Get optional message if there is one 
+custom_message = ""
+if len(sys.argv) > 1:
+    custom_message = sys.argv[1]
 
 need_to_pay = read_sheet()
 paylist_dictionary = {}
@@ -133,10 +142,5 @@ for active in actives_list.keys():
             dry_amount = int(dry_no_commas)
         
         print(active)
-        remind_dues(actives_list[active], wet_amount, dry_amount)
+        remind_dues(actives_list[active], wet_amount, dry_amount, custom_message)
         time.sleep(1)
-        
-    
-# for active_id in actives_ids:
-#     remind_dues(active_id)
-#     time.sleep(1)

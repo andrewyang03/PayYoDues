@@ -1,5 +1,5 @@
 import subprocess
-from flask import Flask, render_template
+from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
 
@@ -7,11 +7,13 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
-@app.route('/run-script')
+@app.route('/run-script', methods=['POST'])
 def run_script():
     try:
-        result = subprocess.run(['python3', 'reminder.py'], check=True, text=True, capture_output=True)
-        return result.stdout
+        data = request.json
+        message = data.get('message', '') # default to empty string if no message
+        result = subprocess.run(['python3', 'reminder.py', message], check=True, text=True, capture_output=True)
+        return jsonify({"success": True, "output": result.stdout, "message": "Reminder Processed"})
     except subprocess.CalledProcessError as e:
         return f"Error: {e}"
 

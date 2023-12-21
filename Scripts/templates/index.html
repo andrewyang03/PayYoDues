@@ -3,50 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <title>Run Python Script</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/reminder.css') }}">
 </head>
 <body>
-    <h1>Pay Yo Dues</h1>
-    
-    <div>
-        <h1>Customize Script</h1>
-        <div>
-            <h3>Message Content</h3>
-            <input type="text" placeholder="default message is applied for no input"></input>
+    <div class="content">
+        <div class="description">
+            <h1>Pay Yo Dues</h1>
+            <h2 class="headers">Customize Reminders</h2>
+            <p class="paragraph">This is pretty self explanatory to use. Click Run to run, Stop to stop.</p>
         </div>
-        <div>
-            <h3>Frequency</h3>
-            <p>How often do you want users to be reminded</p>
-            <select>
-                <option>Twice a Day</option>
-                <option>Every Day</option>
-                <option>Twice a Week</option>
-                <option>Every Week</option>
-                <option>Ever Two Weeks</option>
-            </select>
+        <div class="changeMessage">
+            <h3 class="headers">Change Message Content</h3>
+            <p class="paragraph">Default message is: You have an outstanding balance of $ dollars in wet/dry dues. Please pay to CashApp $SAMMYSX or you will be fined</p>
+            <textarea class="messageBox" type="text" placeholder="Please type your message"></textarea>
         </div>
+        <div class="frequency">
+            <h3 class="headers">Frequency</h3>
+            <p class="paragraph">How often do you want users to be reminded?</p>
+            <div class="freqOptions">
+                <div class="radioGroup">
+                    <input type="radio" name="frequency" id="twice-day">
+                    <label class="bullets">Twice a Day</label>
+                </div>
+                <div class="radioGroup">
+                    <input type="radio" name="frequency" id="once-day">
+                    <label class="bullets">Every Day</label>
+                </div>
+                <div class="radioGroup">
+                    <input type="radio" name="frequency" id="twice-week">
+                    <label class="bullets">Twice a Week</label>
+                </div>
+                <div class="radioGroup">
+                    <input type="radio" name="frequency" id="once-week">
+                    <label class="bullets">Every Week</label>
+                </div>
+                <div class="radioGroup">
+                    <input type="radio" name="frequency" id="two-weeks">
+                    <label class="bullets">Every Two Weeks</label>
+                </div>
+            </div>
+        </div>
+        <div class="scriptRun">
+            <button class="scriptBtnStart" onclick="startRunningScript()">Run</button>
+            <button class="scriptBtnStop" onClick="stopRunningScript()">Stop</button>
+        </div>
+        <p id = "result"></p>
+
     </div>
-
-    <button onclick="startRunningScript()">Start SlackBot</button>
-    <button onClick="stopRunningScript()">Stop SlackBot</button>
-
+    <div class="images">
+        <img class="image" src="{{url_for('static', filename='images/KevBen.png')}}" alt="Silly Pledge">
+        <img class="image" src="{{url_for('static', filename='images/Selko_BlackFriends.png')}}" alt="Two Months At Morgan Stanley">
+    </div>
+    
     <script>
         let intervalID
+        let base_frequency = 10 * 1000 //Runs every 10 seconds
+        function getFrequency () {
+            const selectedRadio = document.querySelector('input[type=radio][name=frequency]:checked')
+            if (!selectedRadio) {
+                return null
+            }
+            switch(selectedRadio.id) {
+                case 'twice-day':
+                    return 2 * base_frequency
+                case 'once-day':
+                    return 4 * base_frequency
+                case 'twice-week':
+                    return 8 * base_frequency
+                case 'once-week':
+                    return 16 * base_frequency
+                case 'two-weeks':
+                    return 32 * base_frequency
+                default:
+                    return null
+            }
+        }
+
         function runScript() {
-            fetch('/run-script')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('result').textContent = data;
-                });
+            if (!intervalID) {
+                console.log("Time run not set")
+                return
+            }
+            let payload = {}
+            const message = document.querySelector('.messageBox').value.trim()
+            if (message.length > 0) {
+                payload.message = message
+            }
+            fetch('/run-script', {
+                method: 'POST', 
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP Error! Status: ${response.status}`)
+                }
+                return response.text()
+            }).then(data => {
+                const resultElt = document.getElementById('result')
+                if (resultElt) {
+                    //Change this later
+                    resultElt.textContent = data
+                } else {
+                    console.error("Result element not found")
+                }
+            }).catch(err => {
+                console.error("Error fetching data:", err)
+                const resultElt = document.getElementById('result')
+                if (resultElt) {
+                    resultElt.textContent = "Error: ${error.message}"
+                }
+            })
         }
         function startRunningScript() {
-            if (!intervalID) {
-                intervalID = setInterval(runScript, 30000); // Run every 30 seconds
+            cur_frequency = getFrequency()
+            if (!cur_frequency) {
+                alert("Please select how often you want users to be reminded!")
+                return
             }
+            if (!intervalID) {
+                intervalID = setInterval(runScript, cur_frequency);
+            }
+            console.log("anti viggy bot started")
         }
 
         function stopRunningScript() {
             clearInterval(intervalID);
             intervalID = null;
+            console.log('anti viggy bot stopped')
         }
     </script>
 </body>
