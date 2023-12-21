@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Run Python Script</title>
+</head>
+<body>
+    <h1>Pay Yo Dues</h1>
+    
+    <div>
+        <h1>Customize Script</h1>
+        <div>
+            <h3>Message Content</h3>
+            <input type="text" placeholder="default message is applied for no input"></input>
+        </div>
+        <div>
+            <h3>Frequency</h3>
+            <p>How often do you want users to be reminded</p>
+            <select>
+                <option>Twice a Day</option>
+                <option>Every Day</option>
+                <option>Twice a Week</option>
+                <option>Every Week</option>
+                <option>Ever Two Weeks</option>
+            </select>
+        </div>
+    </div>
+
+    <button onclick="startRunningScript()">Start SlackBot</button>
+    <button onClick="stopRunningScript()">Stop SlackBot</button>
+
+    <script>
+        let intervalID
+        function runScript() {
+            fetch('/run-script')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('result').textContent = data;
+                });
+        }
+        function startRunningScript() {
+            if (!intervalID) {
+                intervalID = setInterval(runScript, 30000); // Run every 30 seconds
+            }
+        }
+
+        function stopRunningScript() {
+            clearInterval(intervalID);
+            intervalID = null;
+        }
+    </script>
+</body>
+</html>
