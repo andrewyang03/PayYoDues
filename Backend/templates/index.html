@@ -12,10 +12,31 @@
             <h2 class="headers">Customize Reminders</h2>
             <p class="paragraph">This is pretty self explanatory to use. Click Run to run, Stop to stop.</p>
         </div>
-        <div class="changeMessage">
-            <h3 class="headers">Change Message Content</h3>
-            <p class="paragraph">Default message is: You have an outstanding balance of $ dollars in wet/dry dues. Please pay to CashApp $SAMMYSX or you will be fined</p>
-            <textarea class="messageBox" type="text" placeholder="Please type your message"></textarea>
+        <div class = 'messageAndSheet'>
+            <div class="changeMessage">
+                <h3 class="headers">Change Message Content</h3>
+                <p class="paragraph">Default message is: You have an outstanding balance of $ dollars in wet/dry dues. Please pay to CashApp $SAMMYSX or you will be fined</p>
+                <textarea class="messageBox" type="text" placeholder="Please type your message"></textarea>
+            </div>
+            <div class ='spreadSheet'>
+                <h3 class = 'headers'>Insert Sheet Link</h3>
+                <p class="paragraph">Please put link for the spreadsheet you have and make sure it is has anyone with the link can view permissions</p>
+                <input class="sheetLink" type="text" placeholder="Paste link here">
+            </div>
+        </div>
+        <div class = 'range'>
+            <div class="rangeOptions">
+                <p class="optionText">Sheet Name:</p>
+                <input class="optionBox" type="text">
+            </div>
+            <div class="rangeOptions">
+                <p class="optionText">From (upper left corner cell):</p>
+                <input class="optionBox" type="text">
+            </div>
+            <div class="rangeOptions">
+                <p class="optionText">To (bottom right corner cell):</p>
+                <input class="optionBox" type="text">
+            </div>
         </div>
         <div class="frequency">
             <h3 class="headers">Frequency</h3>
@@ -86,9 +107,32 @@
             }
             let payload = {}
             const message = document.querySelector('.messageBox').value.trim()
+            let fullLink = document.querySelector('.sheetLink').value.trim()
+            const link = fullLink.match(/\/d\/(.+)\//)
+
+            let sheetSpecify = document.querySelectorAll('.optionBox')
+            let values = []
+            
+
+            sheetSpecify.forEach(elt => {
+                if (elt) {
+                    values.push(elt.value.trim())
+                }
+            })
+            console.log(values)
+            if (values.length !== 3) {
+                alert("Please complete the three inputs for sheet specifications!")
+                return
+            }
+
+            console.log(sheetSpecify)
             if (message.length > 0) {
                 payload.message = message
             }
+            payload.link = link[1]
+            payload.sheetName = values[0]
+            payload.start = values[1]
+            payload.end = values[2]
             fetch('/run-script', {
                 method: 'POST', 
                 headers: {
@@ -118,6 +162,14 @@
         }
         function startRunningScript() {
             cur_frequency = getFrequency()
+            let fullLink = document.querySelector('.sheetLink').value.trim()
+            let sheetSpecify = document.querySelector('.optionBox').value.trim()
+            console.log(sheetSpecify)
+
+            if (!fullLink) {
+                alert("Please put a link in the input")
+                return
+            }
             if (!cur_frequency) {
                 alert("Please select how often you want users to be reminded!")
                 return

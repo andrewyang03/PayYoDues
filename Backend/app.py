@@ -1,5 +1,7 @@
 import subprocess
 from flask import Flask, request, jsonify, render_template
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__)
 
@@ -12,7 +14,17 @@ def run_script():
     try:
         data = request.json
         message = data.get('message', '') # default to empty string if no message
-        result = subprocess.run(['python3', 'reminder.py', message], check=True, text=True, capture_output=True)
+        link = data.get('link')
+        sheetName = data.get('sheetName')
+        start = data.get('start')
+        end = data.get('end')
+        
+        load_dotenv(os.path.join(os.pardir, '.env'))
+        slack_token = os.getenv('SLACK_TOKEN')
+        
+        script_path = os.path.join(os.pardir, 'Scripts', 'reminder.py')
+        
+        result = subprocess.run(['python3', script_path, message, slack_token, link, sheetName, start, end], check=True, text=True, capture_output=True)
         return jsonify({"success": True, "output": result.stdout, "message": "Reminder Processed"})
     except subprocess.CalledProcessError as e:
         return f"Error: {e}"

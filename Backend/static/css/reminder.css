@@ -44,6 +44,12 @@ body {
     height: auto;
 }
 
+.messageAndSheet {
+    display: flex;
+    justify-content: space-around;
+    margin: 2% 1% 1% 4%;
+}
+
 .messageBox {
     border: 0.75px solid #CCCCCC;
     border-radius: 5px;
@@ -51,6 +57,48 @@ body {
     color: #717171;
     padding: 5px;
     margin: 3%;
+}
+
+.sheetLink {
+    border: 0.75px solid #CCCCCC;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #717171;
+    padding: 5px;
+    margin: 3%;
+}
+
+.spreadSheet {
+    width: 80%;
+    height: auto;
+}
+
+.range {
+    display: flex;
+    justify-content: space-evenly;
+    width: 90%;
+}
+
+.rangeOptions{
+    display: flex;
+    justify-content: space-around;
+}
+
+.optionText {
+    font-size: 12px;
+    margin: 0%;
+    color: #717171
+}
+
+.optionBox {
+    border: 0.75px solid #CCCCCC;
+    border-radius: 5px;
+    font-size: 12px;
+    color: #717171;
+    padding: 2px;
+    margin: 1%;
+    max-height: 30px;
+    max-width: 50px;
 }
 
 .frequency {
@@ -69,7 +117,7 @@ body {
 }
 
 .paragraph {
-    font-size: 18px;
+    font-size: 16px;
     margin: 0%;
     color: #717171
 }

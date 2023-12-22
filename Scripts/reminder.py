@@ -17,15 +17,26 @@ env_path = Path(current_directory) / '.env'
 
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 # This ID can be changed once we have the real list
-SPREADSHEET_ID = "1U0yyxK8cErhOgN-eSbTbLnSjYhyjWGxREOiNMoU5HDo"
 
-CLIENT_SECRETS_FILE = "/home/andrewy/SlackBot/SAM-SX/Scripts/test.json"
-TOKEN_PATH = "/home/andrewy/SlackBot/SAM-SX/Scripts/token.json"
+CLIENT_SECRETS_FILE = "/home/andrewy/SlackBot/SAM-SX/test.json"
+TOKEN_PATH = "/home/andrewy/SlackBot/SAM-SX/token.json"
 
 load_dotenv(dotenv_path=env_path)
 
+# Get optional message if there is one, and get the slack_token
+custom_message = ""
+slack_token = ""
+if len(sys.argv) > 6:
+    custom_message = sys.argv[1]
+    slack_token = sys.argv[2]
+    SPREADSHEET_ID = sys.argv[3]
+    sheetName = sys.argv[4]
+    startCell = sys.argv[5]
+    endCell = sys.argv[6]
+else:
+    raise Exception("Not enough arguments were provided")
 # Stores the token by loading an environment variable
-client = slack.WebClient(token=os.environ['SLACK_TOKEN'])
+client = slack.WebClient(token=slack_token)
 
 dues_pattern = r'\$[0-9\,]+'
 
@@ -67,8 +78,8 @@ def get_users():
 
 def remind_dues(id, wet_balance, dry_balance, custom_message):
     try:
-        wet_dues = "You have an outstanding balance of $" + str(wet_balance) +" for Wet Dues. Please pay your dues or you will be fined"
-        dry_dues = "You have an outstanding balance of $"+ str(dry_balance) +" for Dry Dues. Please pay your dues or you will be fined"
+        wet_dues = "You have an outstanding balance of $" + str(wet_balance) +" for Wet Dues. Please pay your dues through CashApp $sxSAMMY or you will be fined"
+        dry_dues = "You have an outstanding balance of $"+ str(dry_balance) +" for Dry Dues. Please pay your dues through CashApp $sxSAMMY or you be fined"
         if custom_message:
             client.chat_postMessage(channel=id, text=custom_message)
         else:
@@ -103,9 +114,9 @@ def read_sheet():
     try:
         service = build("sheets", "v4", credentials=credentials)
         sheets = service.spreadsheets()
-        
+        excelRange = sheetName + "!" + startCell + ":" + endCell
         # Adjust the cell range as fit
-        result = sheets.values().get(spreadsheetId=SPREADSHEET_ID, range="Sheet1!A3:C7").execute()
+        result = sheets.values().get(spreadsheetId=SPREADSHEET_ID, range=excelRange).execute()
         
         values = result.get("values", [])
         
@@ -114,11 +125,6 @@ def read_sheet():
         #     print(row)
     except HttpError as error:
         print(error)
-
-# Get optional message if there is one 
-custom_message = ""
-if len(sys.argv) > 1:
-    custom_message = sys.argv[1]
 
 need_to_pay = read_sheet()
 paylist_dictionary = {}
