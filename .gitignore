@@ -1,0 +1,10 @@
+#environment
+/.env
+
+#backend
+/Backend/static/images/
+/Backend/token.json
+
+#GoogleSheetAPI Tokens
+/test.json
+/token.json
