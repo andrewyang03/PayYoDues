@@ -1,0 +1,41 @@
+.modal {
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: fixed;
+    background: rgba(49, 49, 49, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+    background-color: #EDE7F6;
+    width: 20%;
+    height: 30%;
+    text-align: center;
+    margin: 5%;
+    border-radius: 20px;
+    align-items: center;
+    flex-direction: column;
+}
+
+.confirmation {
+    width: 90%;
+    margin: 3%;
+}
+
+.close {
+    cursor: pointer;
+    border: 0.75px solid #CCCCCC;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #717171;
+    padding: 5px;
+    margin: 3%;
+}
