@@ -6,10 +6,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #673AB7;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
   margin: 2%;
 }
 
@@ -20,11 +16,27 @@ code {
 
 .paragraph {
   font-size: 16px;
-  margin: 0%;
+  margin: 1%;
+  width: 95%;
   color: #717171
 }
 
 .headers {
   font-size: 30px;
   margin: 1.5%;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  background-color: #EDE7F6;
+  width: 95%;
+  height: 100%;
+  text-align: center;
+  margin: 2%;
+  border-radius: 20px;
+  border: 2px solid #000;
+  font-family: monospace;
+  align-items: center;
+  flex-direction: column;
 }

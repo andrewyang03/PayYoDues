@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import styles from "./remind.module.css"
 import popup from "./popup.module.css"
-import "../index.css"
+import "../../index.css"
 
 const Remind = () => {
     const [intervalID, setIntervalID] = useState(null)
@@ -135,7 +135,7 @@ const Remind = () => {
     }
 
     return (
-        <div className={styles.content}>
+        <div className="content">
             <div className={styles.description}>
                 <h1>Pay Yo Dues</h1>
                 <h2 className="headers">Customize Reminders</h2>
@@ -167,7 +167,7 @@ const Remind = () => {
             </div>
             <div className={styles.range}>
                 <div className={styles.rangeOptions}>
-                    <p className={styles.optionText}>Sheet Name:</p>
+                    <p className={styles.optionText}>Sheet Name (Case and Space sensitive):</p>
                     <input 
                         className={styles.optionBox} 
                         type="text"
