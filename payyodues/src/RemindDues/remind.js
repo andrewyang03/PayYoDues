@@ -33,39 +33,24 @@ const Remind = () => {
     }
 
     const runScript = () => {
-        if (!intervalID) {
-            console.log("Time run not set")
-            return
-        }
         let payload = {}
-        const message = document.querySelector('.messageBox').value.trim()
-        let fullLink = document.querySelector('.sheetLink').value.trim()
-        const link = fullLink.match(/\/d\/(.+)\//)
+        const linkid = sheetLink.match(/\/d\/(.+)\//)
 
-        let sheetSpecify = document.querySelectorAll('.optionBox')
-        let values = []
-        
+        let sheetsSpecifics = [linkid[1], sheetName, rangeStart, rangeEnd]
 
-        sheetSpecify.forEach(elt => {
-            if (elt) {
-                values.push(elt.value.trim())
-            }
-        })
-        console.log(values)
-        if (values.length !== 3) {
-            alert("Please complete the three inputs for sheet specifications!")
+        if (sheetsSpecifics.length !== 4) {
+            alert("Form in incomplete!")
             return
         }
-
-        console.log(sheetSpecify)
         if (message.length > 0) {
             payload.message = message
         }
-        payload.link = link[1]
-        payload.sheetName = values[0]
-        payload.start = values[1]
-        payload.end = values[2]
-        fetch('/run-script', {
+        payload.sheetID = sheetsSpecifics[0]
+        payload.sheetName = sheetsSpecifics[1]
+        payload.start = sheetsSpecifics[2]
+        payload.end = sheetsSpecifics[3]
+        console.log(payload)
+        fetch('http://localhost:5000/run-script', {
             method: 'POST', 
             headers: {
                 'Content-Type': 'application/json',
@@ -77,19 +62,9 @@ const Remind = () => {
             }
             return response.text()
         }).then(data => {
-            const resultElt = document.getElementById('result')
-            if (resultElt) {
-                //Change this later
-                resultElt.textContent = data
-            } else {
-                console.error("Result element not found")
-            }
+            console.log("Response from server:", data)
         }).catch(err => {
             console.error("Error fetching data:", err)
-            const resultElt = document.getElementById('result')
-            if (resultElt) {
-                resultElt.textContent = "Error: ${error.message}"
-            }
         })
     }
     const startRunningScript = () => {
@@ -133,19 +108,19 @@ const Remind = () => {
     }, [modalStart, modalStop])
    
     const handleMessageChange = (e) => {
-        setMessage(e.target.value)
+        setMessage(e.target.value.trim())
     }
     const handleSheetLinkChange = (e) => {
-        setSheetLink(e.target.value)
+        setSheetLink(e.target.value.trim())
     }
     const handleSheetNameChange = (e) => {
-        setSheetName(e.target.value)
+        setSheetName(e.target.value.trim())
     }
     const handleRangeStartChange = (e) => {
-        setRangeStart(e.target.value)
+        setRangeStart(e.target.value.trim())
     }
     const handleRangeEndChange = (e) => {
-        setRangeEnd(e.target.value)
+        setRangeEnd(e.target.value.trim())
     }
     const handleFrequencyChange = (e) => {
         setFrequency(e.target.value)
